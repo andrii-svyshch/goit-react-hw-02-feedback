@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import PropTypes from 'prop-type';
+import PropTypes from 'prop-types';
 import Section from 'Components/Section';
 import FeedbackOptions from 'Components/FeedbackOptions';
 import Statistics from 'Components/Statistics';
@@ -14,7 +14,11 @@ class App extends Component {
     initialBad: 0,
   };
 
-  static propTypes = {};
+  static propTypes = {
+    initialGood: PropTypes.number.isRequired,
+    initialNeutral: PropTypes.number.isRequired,
+    initialBad: PropTypes.number.isRequired,
+  };
 
   state = {
     good: this.props.initialGood,
@@ -22,31 +26,23 @@ class App extends Component {
     bad: this.props.initialBad,
   };
 
-  handleFeedback = e => {
+  handleFeedback = ({ target }) => {
     this.setState(prevState => {
-      const value = e.target.name;
+      const { name } = target;
       return {
-        [value]: prevState[value] + 1,
+        [name]: prevState[name] + 1,
       };
     });
   };
 
-  countTotalFeedback = (...args) =>
-    args.reduce((a, b) => a + b);
+  countTotalFeedback = (...args) => args.reduce((a, b) => a + b);
 
   countPositiveFeedbackPercentage = (good, total) =>
     total !== 0 ? Math.round((good / total) * 100) : 0;
 
   render() {
     const { good, bad, neutral } = this.state;
-    const total = this.countTotalFeedback(
-      good,
-      bad,
-      neutral,
-    );
-
-    const positivePercentage =
-      this.countPositiveFeedbackPercentage(good, total);
+    const total = this.countTotalFeedback(good, bad, neutral);
 
     return (
       <Section title="Please leave feedback">
@@ -61,7 +57,10 @@ class App extends Component {
             neutral={neutral}
             bad={bad}
             total={total}
-            positivePercentage={positivePercentage}
+            positivePercentage={this.countPositiveFeedbackPercentage(
+              good,
+              total,
+            )}
           />
         ) : (
           <Notification message="No feedback given" />

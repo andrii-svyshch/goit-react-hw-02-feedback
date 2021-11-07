@@ -1,15 +1,16 @@
-export default function FeedbackOptions({
-  options,
-  onLeaveFeedback,
-}) {
+import shortid from 'shortid';
+import s from './FeedbackOptions.module.css';
+
+export default function FeedbackOptions({ options, onLeaveFeedback }) {
   return (
     <>
       {options.map(option => (
         <button
           type="button"
           name={option}
-          className="feedback__button"
+          className={s.button}
           onClick={onLeaveFeedback}
+          key={shortid.generate()}
         >
           {option}
         </button>
